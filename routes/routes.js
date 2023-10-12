@@ -10,9 +10,10 @@ const Record = require('../models/record')
 
 router.post('/getdate' ,async(req ,res)=>{
     try{
+
         const date = req.body.date;
         const curr = await Date.findOne({where : {date : date}});
-        console.log(curr) 
+        console.log(curr)
         if(curr != null){
             const students = await curr.getStudents();
             return res.json({success : true , students})
@@ -36,11 +37,11 @@ router.post('/attendence' , async(req, res)=>{
         const data = req.body.data;
 
         const currDate = await Date.create({date : date})
+        console.log("data: ",data);
+        
         for(let i =0;i<data.length;i++){
-
-            // data.forEach(async (elem) =>{
-                let elem = data[i]
-                console.log(elem)
+                let elem = data[i];
+                console.log("elem ",elem)
                 const student = await Student.findByPk(elem.id);
                 if(elem.present){
                     student.totalPresent = student.totalPresent+1;
@@ -48,7 +49,6 @@ router.post('/attendence' , async(req, res)=>{
 
                 }
                 await currDate.addStudent(student , { through : {present : elem.present}})
-            // })
         }
 
         let result = await currDate.getStudents();

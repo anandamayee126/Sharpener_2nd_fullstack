@@ -27,3 +27,12 @@ li{
 .hide{
     display : none;
 }
+
+table {
+    width: 100%;
+}
+
+th,td{
+    min-width: 25%;
+    text-align: center;
+}
