@@ -1,20 +1,38 @@
-const express = require('express');
-const app = express();
-const cors= require('cors');
-const sequelize= require('./database/db');
-const router= require('./routes/routes');
-const student_db= require('./models/student_db');
-const presence= require('./models/presence_db');
+const express = require('express')
+const cors = require('cors')
 
-presence.hasMany(student_db);
-student_db.belongsTo(presence);
+const app= express();
 
-app.use(cors());
-app.use(express.json());
-app.use('/student',router);
+const sequelize = require('./util/db')
 
-sequelize.sync().then(() => {
-    app.listen(3000);
-}).catch(err => {
-    console.log(err);
-})
+const Date = require('./models/date')
+const Student = require('./models/student')
+const Record = require('./models/record')
+
+const attendence = require('./routes/routes');
+
+
+app.use(cors())
+app.use(express.json())
+
+
+// Student.create({name : "first"}).then(s => console.log(s)).catch(e => console.log(e))
+// Student.create({name : "second"}).then(s => console.log(s)).catch(e => console.log(e))
+// Student.create({name : "third"}).then(s => console.log(s)).catch(e => console.log(e))
+// Student.create({name : "fourth"}).then(s => console.log(s)).catch(e => console.log(e))
+
+
+
+Date.belongsToMany(Student ,{ through : Record})
+Student.belongsToMany(Date ,{ through : Record})
+
+
+app.use('/student' ,attendence )
+
+sequelize
+.sync()
+// .sync({force : true})
+.then(()=>{
+
+    app.listen(4000)
+}).catch(e => console.log(e))
